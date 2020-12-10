@@ -1,0 +1,39 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Newsletter $block */
+?>
+<?= $block->getChildHtml('form_before') ?>
+<form class="form form-newsletter-manage" action="<?= $block->escapeUrl($block->getAction()) ?>" method="post" id="form-validate">
+    <fieldset class="fieldset">
+        <?= $block->getBlockHtml('formkey') ?>
+        <legend class="legend"><span><?= $block->escapeHtml(__('Subscription option')) ?></span></legend><br>
+        <div class="field choice">
+            <input type="hidden" name="is_subscribed" value="0">
+            <input type="checkbox" name="is_subscribed" id="subscription" value="1" title="<?= $block->escapeHtmlAttr(__('Email Subscription')) ?>"<?php if ($block->getIsSubscribed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
+            <label for="subscription" class="label"><span><?= $block->escapeHtml(__('Email Subscription')) ?></span></label>
+        </div>
+        <div class="field choice">
+            <input type="hidden" name="is_sms_confirmed" value="0">
+            <input type="checkbox" name="is_sms_confirmed" id="sms_permission" value="1" title="<?= $block->escapeHtmlAttr(__('SMS Notification Permission')) ?>"<?php if ($block->getIsSubscribed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
+            <label for="sms_permission" class="label"><span><?= $block->escapeHtml(__('I permit to get SMS Notification')) ?></span></label>
+        </div>
+
+        <div class="field choice">
+            <input type="hidden" name="is_call_confirmed" value="0">
+            <input type="checkbox" name="is_call_confirmed" id="call_permission" value="1" title="<?= $block->escapeHtmlAttr(__('Call Permission')) ?>"<?php if ($block->getIsSubscribed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
+            <label for="call_permission" class="label"><span><?= $block->escapeHtml(__('I permit to get Call from this provider')) ?></span></label>
+        </div>
+        <?php /* Extensions placeholder */ ?>
+        <?= $block->getChildHtml('customer.form.newsletter.extra') ?>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary"><button type="submit" title="<?= $block->escapeHtmlAttr(__('Save')) ?>" class="action save primary"><span><?= $block->escapeHtml(__('Save')) ?></span></button></div>
+        <div class="secondary"><a class="action back" href="<?= $block->escapeUrl($block->getBackUrl()) ?>"><span><?= $block->escapeHtml(__('Back')) ?></span></a></div>
+    </div>
+</form>
+<?php /* Extensions placeholder */ ?>
+<?= $block->getChildHtml('customer.form.newsletter.extra2') ?>

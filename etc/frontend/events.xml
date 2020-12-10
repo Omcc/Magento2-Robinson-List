@@ -1,0 +1,5 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="newsletter_subscriber_save_before">
+        <observer name="Mnm_Iys_Observer_ListenSubscribe" instance="Mnm\Iys\Observer\ListenSubscribe" />
+    </event>
+</config>

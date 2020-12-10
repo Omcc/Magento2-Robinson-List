@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <table name="mnm_permission_types" resource="default" engine="innodb" comment="Permission types">
+        <column xsi:type="int" name="permission_id" unsigned="true" nullable="false" identity="true"
+                comment="permission_id"/>
+        <column xsi:type="varchar" name="type" nullable="false" length="150" comment="Permission Type"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="permission_id"/>
+        </constraint>
+        <index referenceId="MNM_PERMISSION_TYPES_PERMISSION_ID" indexType="btree">
+            <column name="permission_id"/>
+        </index>
+
+    </table>
+
+    <table name="mnm_subscriber_permissions" resource="default" engine="innodb" comment="Permission types">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="permission_id"/>
+        <column xsi:type="int" name="subscriber_id" unsigned="true" nullable="false" identity="false"
+                comment="Subscriber ID"/>
+        <column xsi:type="int" name="perm_type_id" unsigned="true" nullable="false" identity="false"
+                comment="Permission Type Id"/>
+        <column xsi:type="int" name="perm_source_id" unsigned="true" nullable="false" identity="false"
+                comment="Permission Type Id"/>
+
+        <column xsi:type="smallint" name="status" unsigned="true"  nullable="false" identity="false"
+                comment="Permission Status"/>
+        <column xsi:type="varchar" name="value" length="150" nullable="false" comment="Medium Value (Tel no , email address)"/>
+        <column xsi:type="timestamp" name="change_status_at" on_update="false" nullable="false"
+                comment="Change Status At"/>
+
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="SUBSCRIBER_PERMISSIONS_PERM_SOURCE_ID_MNM_PERMISSION_SOURCES_ID"
+                    table="mnm_subscriber_permissions" column="perm_source_id" referenceTable="mnm_permission_sources" referenceColumn="id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="SUBSCRIBER_PERMISSIONS_SUBSCRIBER_ID_NEWSLETTER_SUBSCRIBER_SUBSCRIBER_ID"
+                    table="mnm_subscriber_permissions" column="subscriber_id" referenceTable="newsletter_subscriber" referenceColumn="subscriber_id"
+                    onDelete="CASCADE"/>
+
+        <index referenceId="MNM_SUBSCRIBER_PERMISSIONS_ID" indexType="btree">
+            <column name="id"/>
+        </index>
+
+    </table>
+
+    <table name="mnm_permission_sources" resource="default" engine="innodb" comment="Permission sources">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="Source Id"/>
+        <column xsi:type="varchar" name="type" nullable="false" length="150" comment="Permission Source"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="MNM_PERMISSION_SOURCES_ID" indexType="btree">
+            <column name="id"/>
+        </index>
+
+    </table>
+
+
+
+</schema>

@@ -1,0 +1,24 @@
+{
+    "name": "mnm/iys",
+    "description": "MNM Magento 2 Iys Module ",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "authors": [
+        {
+            "name": "Yunus Yüksel",
+            "email": "yunus@mnm.com.tr",
+            "homepage": "https://www.mnm.com.tr",
+            "role": "Magento Partner"
+        }
+    ],
+    "autoload": {
+        "files": [ "registration.php" ],
+        "psr-4": {
+            "Mnm\\Iys\\": ""
+        }
+    }
+}
