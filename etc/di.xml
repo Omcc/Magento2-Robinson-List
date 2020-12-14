@@ -15,5 +15,11 @@
         <plugin name="iys_integration" type="Mnm\Iys\Plugin\Manage\IysSave" sortOrder="1"  />
     </type>
 
+    <preference for="Mnm\Iys\Model\IysRecordInterface" type="Mnm\Iys\Model\RecordMobilDev"/>
+    <preference for="Mnm\Iys\Model\IysSubscriptionManagerInterface" type="Mnm\Iys\Model\IysSubscriptionManager" />
+
+
+
+
 
 </config>

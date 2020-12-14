@@ -50,7 +50,7 @@ class SubscriptionInformation
     {
 
         $storeId = $this->storeManager->getStore()->getId();
-        $customerId = $this->customerSession->getCustomer()->getId();
+        $customerId = $this->getCustomerId();
         $connection = $this->resourceConnection->getConnection();
 
         $select = $connection
@@ -63,6 +63,24 @@ class SubscriptionInformation
         return $connection->fetchOne($select);
 
     }
+
+    public function getCustomerId()
+    {
+        $customerId = $this->customerSession->getCustomer()->getId();
+        return $customerId;
+    }
+
+    public function getEmailAddress()
+    {
+        return $this->customerSession->getCustomer()->getEmail();
+    }
+
+    public function getName()
+    {
+        return $this->customerSession->getCustomer()->getName();
+    }
+
+
 
 
 }

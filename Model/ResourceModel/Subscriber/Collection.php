@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Mnm\Iys\Model\ResourceModel\Subscriber\Subscriber;
+namespace Mnm\Iys\Model\ResourceModel\Subscriber;
 
-use Mnm\Iys\Model\ResourceModel\Subscriber\Subscriber as SubscriberResourceModel;
-use Mnm\Iys\Model\Subscriber\Subscriber as SubscriberModel;
+use Mnm\Iys\Model\ResourceModel\Subscriber as SubscriberResourceModel;
+use Mnm\Iys\Model\Subscriber as SubscriberModel;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
