@@ -97,6 +97,33 @@ class SubscriptionInformation
         return $subscriberCollection->addFieldToFilter('subscriber_id',$this->fetchSubscriptionId())->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_subscribed'])->load();
 
     }
+    public function getSmsRecord(){
+        try{
+            $subscriberCollection = $this->subscriberCollectionFactory->create();
+
+        }catch(\Exception $e)
+        {
+            var_dump($e);
+            exit(1);
+        }
+
+        return $subscriberCollection->addFieldToFilter('subscriber_id',$this->fetchSubscriptionId())->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_sms_confirmed'])->load();
+
+    }
+
+    public function getCallRecord(){
+        try{
+            $subscriberCollection = $this->subscriberCollectionFactory->create();
+
+        }catch(\Exception $e)
+        {
+            var_dump($e);
+            exit(1);
+        }
+
+        return $subscriberCollection->addFieldToFilter('subscriber_id',$this->fetchSubscriptionId())->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_call_confirmed'])->load();
+
+    }
 
 
 

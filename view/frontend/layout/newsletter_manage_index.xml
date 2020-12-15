@@ -1,7 +1,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="customer_account"/>
     <body>
-        <referenceBlock name="customer_newsletter">
+        <referenceBlock name="customer_newsletter" class="Mnm\Iys\Block\Newsletter">
             <action method="setTemplate">
                 <argument name="template" xsi:type="string">Mnm_Iys::form/newsletter.phtml</argument>
             </action>

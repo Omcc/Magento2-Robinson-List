@@ -18,13 +18,13 @@
         </div>
         <div class="field choice">
             <input type="hidden" name="is_sms_confirmed" value="0">
-            <input type="checkbox" name="is_sms_confirmed" id="sms_permission" value="1" title="<?= $block->escapeHtmlAttr(__('SMS Notification Permission')) ?>"<?php if ($block->getIsSubscribed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
+            <input type="checkbox" name="is_sms_confirmed" id="sms_permission" value="1" title="<?= $block->escapeHtmlAttr(__('SMS Notification Permission')) ?>"<?php if ($block->isSmsPermConfirmed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
             <label for="sms_permission" class="label"><span><?= $block->escapeHtml(__('I permit to get SMS Notification')) ?></span></label>
         </div>
 
         <div class="field choice">
             <input type="hidden" name="is_call_confirmed" value="0">
-            <input type="checkbox" name="is_call_confirmed" id="call_permission" value="1" title="<?= $block->escapeHtmlAttr(__('Call Permission')) ?>"<?php if ($block->getIsSubscribed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
+            <input type="checkbox" name="is_call_confirmed" id="call_permission" value="1" title="<?= $block->escapeHtmlAttr(__('Call Permission')) ?>"<?php if ($block->isCallPermConfirmed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
             <label for="call_permission" class="label"><span><?= $block->escapeHtml(__('I permit to get Call from this provider')) ?></span></label>
         </div>
         <?php /* Extensions placeholder */ ?>

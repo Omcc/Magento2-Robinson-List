@@ -17,11 +17,6 @@
 
     <preference for="Mnm\Iys\Model\IysRecordInterface" type="Mnm\Iys\Model\RecordMobilDev"/>
     <preference for="Mnm\Iys\Model\IysSubscriptionManagerInterface" type="Mnm\Iys\Model\IysSubscriptionManager" />
-
-
-
-
-
-
+    <preference for="Magento\Customer\Block\Newsletter" type="Mnm\Iys\Block\Newsletter"/>
 
 </config>

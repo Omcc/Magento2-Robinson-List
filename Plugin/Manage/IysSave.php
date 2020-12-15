@@ -18,6 +18,7 @@ class IysSave
     protected $subscriberFactory;
     protected $dateTime;
     protected $statusCheck;
+    protected $subscriptionInfoFetcher;
 
 
     public function __construct(SubscriptionInformation $subscriptionInfoFetcher,SubscriberFactory $subscriberFactory,StatusCheck $statusCheck)
