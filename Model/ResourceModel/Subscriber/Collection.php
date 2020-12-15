@@ -14,4 +14,9 @@ class Collection extends AbstractCollection
     {
         $this->_init(SubscriberModel::class,SubscriberResourceModel::class);
     }
+
+
+
+
+
 }

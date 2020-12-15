@@ -75,7 +75,7 @@ class RecordMobilDev implements IysRecordInterface
 
     public function getEmailAddress()
     {
-        return $this->emailPermission;
+        return $this->emailAddress;
     }
 
     public function getFirstName()
@@ -124,8 +124,8 @@ class RecordMobilDev implements IysRecordInterface
             "call"=>$this->getCallPermission(),
             "email"=>$this->getEmailAddress(),
             "sendmail"=>$this->getEmailPermission(),
-            "firstname"=>$this->getFirstName(),
-            "lastname"=>$this->getLastName(),
+            "firstName"=>$this->getFirstName(),
+            "lastName"=>$this->getLastName(),
             "source"=>$this->getSourceId(),
             "date"=>$this->getDate(),
             "individual"=>$this->getIndividual(),

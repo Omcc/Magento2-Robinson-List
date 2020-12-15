@@ -10,6 +10,7 @@ namespace Mnm\Iys\Model;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Model\Session;
+use Mnm\Iys\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
 
 /**
  * Checks guest subscription by email.
@@ -33,11 +34,14 @@ class SubscriptionInformation
 
     private $customerSession;
 
-    public function __construct(ResourceConnection $resourceConnection, StoreManagerInterface $storeManager,Session $customerSession)
+    private $subscriberCollectionFactory;
+
+    public function __construct(ResourceConnection $resourceConnection, StoreManagerInterface $storeManager,Session $customerSession,SubscriberCollectionFactory $subscriberCollectionFactory)
     {
         $this->resourceConnection = $resourceConnection;
         $this->storeManager = $storeManager;
         $this->customerSession = $customerSession;
+        $this->subscriberCollectionFactory=$subscriberCollectionFactory;
     }
 
     /**
@@ -79,6 +83,23 @@ class SubscriptionInformation
     {
         return $this->customerSession->getCustomer()->getName();
     }
+
+    public function getMailRecord(){
+        try{
+            $subscriberCollection = $this->subscriberCollectionFactory->create();
+
+        }catch(\Exception $e)
+        {
+            var_dump($e);
+            exit(1);
+        }
+
+        return $subscriberCollection->addFieldToFilter('subscriber_id',$this->fetchSubscriptionId())->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_subscribed'])->load();
+
+    }
+
+
+
 
 
 

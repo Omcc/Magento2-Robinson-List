@@ -7,10 +7,8 @@ use Magento\Framework\App\ObjectManager;
 use Mnm\Iys\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
 use Mnm\Iys\Model\SubscriberFactory;
 use Mnm\Iys\Model\SubscriptionInformation;
-
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mnm\Iys\Model\RecordMobilDev;
-
 use Mnm\Iys\Model\IysSubscriptionManager;
 
 
@@ -29,6 +27,10 @@ class StatusCheck
     private $dateTime;
     private $subscriptionInfoFetcher;
     private $iysSubscriptionManager;
+    private $isPermChanged;
+
+
+
 
 
 
@@ -45,8 +47,6 @@ class StatusCheck
         $this->iysSubscriptionManager=$iysSubscriptionManager;
 
 
-
-
     }
 
     public function setSubscriberId($subscriberId)
@@ -61,27 +61,51 @@ class StatusCheck
 
     public function startCheck()
     {
-        if($this->isSubscriberRecorded())
+
+
+        if(!$this->isSubscriberRecorded())
         {
-
             $this->recordSubscriber();
-
-            $this->initialSubscribeToQueue();
+            $this->SubscribeToQueue();
+            return;
         }
+
+        if($smsRecord = $this->isSmsPermChanged())
+        {
+            $smsRecord->setDataToAll('status',$this->paramData['is_sms_confirmed'])->save();
+        }
+        if($callRecord = $this->isCallPermChanged())
+        {
+            $callRecord->setDataToAll('status',$this->paramData['is_call_confirmed'])->save();
+        }
+        if($mailRecord = $this->isMailPermChanged())
+        {
+            $mailRecord->setDataToAll('status',$this->paramData['is_subscribed'])->save();
+        }
+
+        if($this->isPermChanged)
+        {
+            $this->SubscribeToQueue();
+            return;
+        }
+
+
+
+
     }
 
-    public function initialSubscribeToQueue()
+    public function SubscribeToQueue()
     {
 
 
 
         $customerId = $this->subscriptionInfoFetcher->getCustomerId();
-        $smsPerm = $this->paramData['is_sms_confirmed'];
-        $callPerm = $this->paramData['is_call_confirmed'];
+        $smsPerm = $this->paramData['is_sms_confirmed']?1:2;
+        $callPerm = $this->paramData['is_call_confirmed']?1:2;
 
         $email = $this->subscriptionInfoFetcher->getEmailAddress();
 
-        $emailPerm = $this->paramData['is_subscribed'];
+        $emailPerm = $this->paramData['is_subscribed']?1:2;
 
         $nameComposition=$this->subscriptionInfoFetcher->getName();
         $nameArray = explode(" ",$nameComposition);
@@ -93,14 +117,14 @@ class StatusCheck
         $individual=1;
         $corporate=0;
         $note="dummy note";
-        $phoneNumber="";
+        $phoneNumber="5415053382";
 
 
 
         $recordMobilDev = new RecordMobilDev($customerId,$phoneNumber,$smsPerm,$emailPerm,$callPerm,$email,$firstName,$lastName,$source,$date,$individual,$corporate,$note);
 
         $this->iysSubscriptionManager->subscribe($recordMobilDev);
-        exit(1);
+
 
     }
 
@@ -167,7 +191,30 @@ class StatusCheck
 
     }
 
-    public function isSMSPermChanged($smsParam)
+
+
+    public function isSmsPermChanged()
+    {
+        try{
+            $subscriberCollection = $this->subscriberCollectionFactory->create();
+
+        }catch(\Exception $e)
+        {
+            var_dump($e);
+            exit(1);
+        }
+        $smsRecord = $subscriberCollection->addFieldToFilter('subscriber_id',$this->subscriberId)->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_sms_confirmed'])->load();
+        $smsRecordData = $smsRecord->getData();
+        if($smsRecordData[0]['status'] !== $this->paramData['is_sms_confirmed'])
+        {
+            $this->isPermChanged=true;
+            return $smsRecord;
+        }
+
+        return null;
+    }
+
+    public function isCallPermChanged()
     {
         try{
             $subscriberCollection = $this->subscriberCollectionFactory->create();
@@ -176,20 +223,36 @@ class StatusCheck
             var_dump($e);
             exit(1);
         }
-        $smsPermConfirmed = $subscriberCollection->addFieldToSelect('status')->addFieldToFilter('subscriber_id',$this->subscriberId)->addFieldToFilter('perm_type_id',3)->load()->getData();
+        $callRecord = $subscriberCollection->addFieldToFilter('subscriber_id',$this->subscriberId)->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_call_confirmed'])->load();
+        $callRecordData = $callRecord->getData();
 
-        var_dump($smsPermConfirmed);
-        exit(1);
+        if($callRecordData[0]['status'] !== $this->paramData['is_call_confirmed'])
+        {
+            $this->isPermChanged=true;
+            return $callRecord;
+        }
+
+        return null;
     }
 
-    public function isCallPermChanged($callParam)
+    public function isMailPermChanged()
     {
-        return;
-    }
+        try{
+            $subscriberCollection = $this->subscriberCollectionFactory->create();
+        }catch(\Exception $e)
+        {
+            var_dump($e);
+            exit(1);
+        }
+        $mailRecord = $subscriberCollection->addFieldToFilter('subscriber_id',$this->subscriberId)->addFieldToFilter('perm_type_id',StatusCheck::$permTypes['is_subscribed'])->load();
+        $mailRecordData = $mailRecord->getData();
+        if($mailRecordData[0]['status'] !== $this->paramData['is_subscribed'])
+        {
+            $this->isPermChanged=true;
+            return $mailRecord;
+        }
 
-    public function isPhonePermChanged($phoneParam)
-    {
-        return;
+        return null;
     }
 
     public function setPhonePermFlag()
