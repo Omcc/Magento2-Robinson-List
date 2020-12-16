@@ -12,11 +12,15 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Newsletter\Controller\Manage\Save">
-        <plugin name="iys_integration" type="Mnm\Iys\Plugin\Manage\IysSave" sortOrder="1"  />
+        <plugin name="iys_integration_manage" type="Mnm\Iys\Plugin\Manage\IysSave" sortOrder="1"  />
+    </type>
+    <type name="\Magento\Customer\Controller\Account\CreatePost">
+        <plugin name="iys_integration_signup" type="Mnm\Iys\Plugin\SignUp\CreatePost" sortOrder="2"  />
     </type>
 
     <preference for="Mnm\Iys\Model\IysRecordInterface" type="Mnm\Iys\Model\RecordMobilDev"/>
     <preference for="Mnm\Iys\Model\IysSubscriptionManagerInterface" type="Mnm\Iys\Model\IysSubscriptionManager" />
     <preference for="Magento\Customer\Block\Newsletter" type="Mnm\Iys\Block\Newsletter"/>
+
 
 </config>
