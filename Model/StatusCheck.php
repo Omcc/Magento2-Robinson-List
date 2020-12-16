@@ -10,6 +10,7 @@ use Mnm\Iys\Model\SubscriptionInformation;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mnm\Iys\Model\RecordMobilDev;
 use Mnm\Iys\Model\IysSubscriptionManager;
+use Mnm\Iys\Helper\Data;
 
 
 class StatusCheck
@@ -28,6 +29,7 @@ class StatusCheck
     private $subscriptionInfoFetcher;
     private $iysSubscriptionManager;
     private $isPermChanged;
+    private $iysDataHelper;
 
 
 
@@ -35,7 +37,7 @@ class StatusCheck
 
 
 
-    public function __construct(SubscriberCollectionFactory $subscriberCollectionFactory,SubscriberFactory $subscriberFactory,SubscriptionInformation $subscriptionInfoFetcher,IysSubscriptionManager $iysSubscriptionManager)
+    public function __construct(SubscriberCollectionFactory $subscriberCollectionFactory,SubscriberFactory $subscriberFactory,SubscriptionInformation $subscriptionInfoFetcher,IysSubscriptionManager $iysSubscriptionManager,Data $iysDataHelper)
     {
 
         $this->subscriptionInfoFetcher = $subscriptionInfoFetcher;
@@ -45,6 +47,9 @@ class StatusCheck
             DateTime::class
         );
         $this->iysSubscriptionManager=$iysSubscriptionManager;
+        $this->iysDataHelper=$iysDataHelper;
+
+
 
 
     }
@@ -100,12 +105,28 @@ class StatusCheck
 
 
         $customerId = $this->subscriptionInfoFetcher->getCustomerId();
-        $smsPerm = $this->paramData['is_sms_confirmed']?1:2;
-        $callPerm = $this->paramData['is_call_confirmed']?1:2;
+
+        if(isset($this->paramData['is_sms_confirmed']))
+            $smsPerm = $this->paramData['is_sms_confirmed'];
+        else
+            $smsPerm = -1;
+
+        if(isset($this->paramData['is_call_confirmed'])){
+            $callPerm= $this->paramData['is_call_confirmed'];
+        }
+        else
+            $callPerm=-1;
+
+
+        if(isset($this->paramData['is_subscribed']))
+            $emailPerm = $this->paramData['is_subscribed'];
+        else
+            $emailPerm = -1;
+
 
         $email = $this->subscriptionInfoFetcher->getEmailAddress();
 
-        $emailPerm = $this->paramData['is_subscribed']?1:2;
+
 
         $nameComposition=$this->subscriptionInfoFetcher->getName();
         $nameArray = explode(" ",$nameComposition);
@@ -195,6 +216,9 @@ class StatusCheck
 
     public function isSmsPermChanged()
     {
+
+        if(!$this->iysDataHelper->isIysSmsEnabled())
+            return null;
         try{
             $subscriberCollection = $this->subscriberCollectionFactory->create();
 
@@ -216,6 +240,8 @@ class StatusCheck
 
     public function isCallPermChanged()
     {
+        if(!$this->iysDataHelper->isIysCallEnabled())
+            return null;
         try{
             $subscriberCollection = $this->subscriberCollectionFactory->create();
         }catch(\Exception $e)
@@ -237,6 +263,8 @@ class StatusCheck
 
     public function isMailPermChanged()
     {
+        if(!$this->iysDataHelper->isIysEmailEnabled())
+            return null;
         try{
             $subscriberCollection = $this->subscriberCollectionFactory->create();
         }catch(\Exception $e)

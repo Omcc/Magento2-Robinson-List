@@ -11,6 +11,7 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Newsletter\Model\SubscriberFactory;
 use Mnm\Iys\Model\SubscriptionInformation;
+use Mnm\Iys\Helper\Data;
 
 /**
  * Customer front  newsletter manage block
@@ -26,11 +27,13 @@ class Newsletter extends \Magento\Customer\Block\Account\Dashboard
      */
 
     private $subscriptionInfoFetcher;
+    public $iysDataHelper;
 
-    public function __construct(Context $context, Session $customerSession, SubscriberFactory $subscriberFactory, CustomerRepositoryInterface $customerRepository, AccountManagementInterface $customerAccountManagement, array $data = [],SubscriptionInformation $subscriptionInfoFetcher)
+    public function __construct(Context $context, Session $customerSession, SubscriberFactory $subscriberFactory, CustomerRepositoryInterface $customerRepository, AccountManagementInterface $customerAccountManagement, array $data = [],SubscriptionInformation $subscriptionInfoFetcher,Data $iysDataHelper)
     {
         parent::__construct($context, $customerSession, $subscriberFactory, $customerRepository, $customerAccountManagement, $data);
         $this->subscriptionInfoFetcher = $subscriptionInfoFetcher;
+        $this->iysDataHelper = $iysDataHelper;
     }
 
     protected $_template = 'Magento_Customer::form/newsletter.phtml';
@@ -56,12 +59,18 @@ class Newsletter extends \Magento\Customer\Block\Account\Dashboard
 
     public function isSmsPermConfirmed()
     {
-        return $this->subscriptionInfoFetcher->getSmsRecord()->getData()[0]['status'];
+        $smsRecord = $this->subscriptionInfoFetcher->getSmsRecord()->getData();
+        if(!$smsRecord)
+            return 0;
+        return $smsRecord[0]['status'];
     }
 
     public function isCallPermConfirmed()
     {
-        return $this->subscriptionInfoFetcher->getCallRecord()->getData()[0]['status'];
+        $callRecord = $this->subscriptionInfoFetcher->getCallRecord()->getData();
+        if(!$callRecord)
+            return 0;
+        return $callRecord[0]['status'];
     }
 
 }

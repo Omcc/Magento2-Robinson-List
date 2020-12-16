@@ -36,7 +36,7 @@ $formData = $block->getFormData();
             ->setObject($formData)
             ->setForceUseCustomerAttributes(true)
             ->toHtml() ?>
-        <?php if ($block->isNewsletterEnabled()): ?>
+        <?php if ($block->isIysEmailEnabled()): ?>
             <div class="field choice newsletter">
                 <input type="checkbox"
                        name="is_subscribed"
@@ -52,7 +52,7 @@ $formData = $block->getFormData();
             <?php /* Extensions placeholder */ ?>
             <?= $block->getChildHtml('customer.form.register.newsletter') ?>
         <?php endif ?>
-        <?php if ($block->isNewsletterEnabled()): ?>
+        <?php if ($block->isIysSmsEnabled()): ?>
             <div class="field choice newsletter">
                 <input type="checkbox"
                        name="is_sms_confirmed"
@@ -68,7 +68,7 @@ $formData = $block->getFormData();
             <?php /* Extensions placeholder */ ?>
             <?= $block->getChildHtml('customer.form.register.newsletter') ?>
         <?php endif ?>
-        <?php if ($block->isNewsletterEnabled()): ?>
+        <?php if ($block->isIysCallEnabled()): ?>
             <div class="field choice newsletter">
                 <input type="checkbox"
                        name="is_call_confirmed"

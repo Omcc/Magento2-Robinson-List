@@ -195,7 +195,17 @@ class Register extends \Magento\Directory\Block\Data
 
     public function isIysCallEnabled()
     {
-        return $this->iysHelper->
+        return $this->iysHelper->isIysCallEnabled();
+    }
+
+    public function isIysEmailEnabled()
+    {
+        return $this->iysHelper->isIysEmailEnabled();
+    }
+
+    public function isIysSmsEnabled()
+    {
+        return $this->iysHelper->isIysSmsEnabled();
     }
 
     /**
