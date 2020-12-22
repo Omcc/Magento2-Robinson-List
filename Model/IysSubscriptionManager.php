@@ -19,7 +19,11 @@ class IysSubscriptionManager implements IysSubscriptionManagerInterface
 
     public function subscribe(IysRecordInterface $iysRecord)
     {
+
+
+
         $this->_iysRegister->publish($iysRecord->convertToArray());
+
 
     }
 }

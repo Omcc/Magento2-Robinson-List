@@ -21,11 +21,12 @@ class RecordMobilDev implements IysRecordInterface
     private $individual;
     private $corporate;
     private $note;
+    private $ipAddress;
 
 
 
 
-    public function __construct($customerId,$phoneNumber,$smsPermission,$emailPermission,$callPermission,$emailAddress,$firstName,$lastName,$sourceId,$date,$individual,$corporate,$note)
+    public function __construct($customerId,$phoneNumber,$smsPermission,$emailPermission,$callPermission,$emailAddress,$firstName,$lastName,$sourceId,$date,$individual,$corporate,$note,$ipAddress)
 
     {
         $this->customerId=$customerId;
@@ -41,8 +42,30 @@ class RecordMobilDev implements IysRecordInterface
         $this->individual=$individual;
         $this->corporate=$corporate;
         $this->note=$note;
+        $this->ipAddress=$ipAddress;
+
+        $this->valueConversion();
 
 
+
+    }
+
+    public function valueConversion()
+    {
+        $this->smsPermission = $this->smsPermission ? $this->smsPermission:2;
+        $this->emailPermission = $this->emailPermission ? $this->emailPermission:2;
+        $this->callPermission = $this->callPermission ? $this->callPermission:2;
+        $this->date=$this->formatDate($this->date);
+
+    }
+
+    public function formatDate($date)
+    {
+
+        $timeArr = explode(" ",$date);
+        $time= explode(":",$timeArr[1]);
+        $time=$time[0].":".$time[1];
+        return $timeArr[0] . "T" .$time;
 
     }
 
@@ -113,6 +136,11 @@ class RecordMobilDev implements IysRecordInterface
        return $this->note;
     }
 
+    public function getIpAddress()
+    {
+        return $this->ipAddress;
+    }
+
 
 
     public function convertToArray()
@@ -130,7 +158,8 @@ class RecordMobilDev implements IysRecordInterface
             "date"=>$this->getDate(),
             "individual"=>$this->getIndividual(),
             "corporate"=>$this->getCorporate(),
-            "note"=>$this->getNote()
+            "note"=>$this->getNote(),
+            "ipAddress"=>$this->getIpAddress()
         ];
     }
 }

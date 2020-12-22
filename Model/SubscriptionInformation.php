@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Mnm\Iys\Model;
 
+
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Model\Session;
@@ -50,12 +51,16 @@ class SubscriptionInformation
      * @param string $subscriberEmail
      * @return bool
      */
-    public function fetchSubscriptionId()
+    public function fetchSubscriptionId($customerId=NULL)
     {
 
         $storeId = $this->storeManager->getStore()->getId();
-        $customerId = $this->getCustomerId();
+
+        if(!$customerId)
+            $customerId = $this->getCustomerId();
         $connection = $this->resourceConnection->getConnection();
+
+
 
         $select = $connection
             ->select()
@@ -76,6 +81,7 @@ class SubscriptionInformation
 
     public function getEmailAddress()
     {
+
         return $this->customerSession->getCustomer()->getEmail();
     }
 

@@ -27,4 +27,28 @@ class Data extends AbstractHelper
         return $this->getConfig('iys/general/call_enabled');
     }
 
+    public function getApiBaseUrl()
+    {
+        return $this->getConfig('iys/api_conf/base_url');
+    }
+
+    public function getUserIpAddress()
+    {
+        if(!empty($_SERVER['HTTP_CLIENT_IP']))
+        {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+        {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+        }else
+        {
+            $ip=$_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
+    }
+
+
+
 }

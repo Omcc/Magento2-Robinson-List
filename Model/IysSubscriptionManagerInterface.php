@@ -14,6 +14,8 @@ Interface IysSubscriptionManagerInterface
      * @param IysRecordInterface $iysRecord
      * @return void
      */
+
+
     public function subscribe(IysRecordInterface $iysRecord);
 
 }

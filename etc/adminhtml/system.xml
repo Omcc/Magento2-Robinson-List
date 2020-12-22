@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="mnm_iys" translate="label" sortOrder="900">
+        <tab id="mnm" translate="label" sortOrder="900">
             <label>Mnm Iys</label>
         </tab>
         <section id="iys" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>General Settings</label>
-            <tab>mnm_iys</tab>
+            <label>IYS</label>
+            <tab>mnm</tab>
             <resource>Mnm_Iys::system_config</resource>
 
             <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -25,6 +25,18 @@
                 <field id="sms_enabled" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sms Permission Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+
+            </group>
+            <group id="api_conf" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+
+                <label>Api Configurations</label>
+
+
+                <field id="base_url" translate="label comment" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Api Base Url</label>
+                    <comment>Api Base Url Field</comment>
                 </field>
 
 

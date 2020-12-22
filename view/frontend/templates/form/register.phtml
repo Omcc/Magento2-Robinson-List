@@ -36,8 +36,10 @@ $formData = $block->getFormData();
             ->setObject($formData)
             ->setForceUseCustomerAttributes(true)
             ->toHtml() ?>
-        <?php if ($block->isIysEmailEnabled()): ?>
+
             <div class="field choice newsletter">
+                <input type="hidden" name="is_subscribed" value="0">
+                <?php if ($block->isIysEmailEnabled()): ?>
                 <input type="checkbox"
                        name="is_subscribed"
                        title="<?= $escaper->escapeHtmlAttr(__('Sign Up for Newsletter and Give Email Permission')) ?>"
@@ -48,12 +50,16 @@ $formData = $block->getFormData();
                 <label for="is_subscribed" class="label">
                     <span><?= $escaper->escapeHtml(__('Email Permission')) ?></span>
                 </label>
+                    <?php /* Extensions placeholder */ ?>
+                    <?= $block->getChildHtml('customer.form.register.newsletter') ?>
+                <?php endif ?>
             </div>
-            <?php /* Extensions placeholder */ ?>
-            <?= $block->getChildHtml('customer.form.register.newsletter') ?>
-        <?php endif ?>
-        <?php if ($block->isIysSmsEnabled()): ?>
+
+
+
             <div class="field choice newsletter">
+                <input type="hidden" name="is_sms_confirmed" value="0">
+                <?php if($block->isIysSmsEnabled()):?>
                 <input type="checkbox"
                        name="is_sms_confirmed"
                        title="<?= $escaper->escapeHtmlAttr(__('Sign Up for Newsletter')) ?>"
@@ -64,12 +70,17 @@ $formData = $block->getFormData();
                 <label for="is_sms_confirmed" class="label">
                     <span><?= $escaper->escapeHtml(__('Sms Permission')) ?></span>
                 </label>
+                    <?php /* Extensions placeholder */ ?>
+                    <?= $block->getChildHtml('customer.form.register.newsletter') ?>
+                <?php endif?>
             </div>
-            <?php /* Extensions placeholder */ ?>
-            <?= $block->getChildHtml('customer.form.register.newsletter') ?>
-        <?php endif ?>
-        <?php if ($block->isIysCallEnabled()): ?>
+
+
+
             <div class="field choice newsletter">
+                <input type="hidden" name="is_call_confirmed" value="0">
+
+                <?php if ($block->isIysCallEnabled()): ?>
                 <input type="checkbox"
                        name="is_call_confirmed"
                        title="<?= $escaper->escapeHtmlAttr(__('Sign Up for Newsletter')) ?>"
@@ -80,10 +91,11 @@ $formData = $block->getFormData();
                 <label for="is_call_confirmed" class="label">
                     <span><?= $escaper->escapeHtml(__('Call Permission')) ?></span>
                 </label>
+                    <?php /* Extensions placeholder */ ?>
+                    <?= $block->getChildHtml('customer.form.register.newsletter') ?>
+                <?php endif ?>
             </div>
-            <?php /* Extensions placeholder */ ?>
-            <?= $block->getChildHtml('customer.form.register.newsletter') ?>
-        <?php endif ?>
+
 
         <?php $_dob = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class) ?>
         <?php if ($_dob->isEnabled()): ?>

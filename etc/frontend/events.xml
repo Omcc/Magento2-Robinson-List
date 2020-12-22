@@ -2,4 +2,7 @@
     <event name="newsletter_subscriber_save_before">
         <observer name="Mnm_Iys_Observer_ListenSubscribe" instance="Mnm\Iys\Observer\ListenSubscribe" />
     </event>
+    <event name="customer_register_success">
+        <observer name="Mnm_Iys_Observer_Register_CustomerRegister" instance="Mnm\Iys\Observer\Register\CustomerRegister" />
+    </event>
 </config>

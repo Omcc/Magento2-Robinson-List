@@ -11,6 +11,9 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 use Mnm\Iys\Model\RecordMobilDev;
 use Mnm\Iys\Model\IysSubscriptionManager;
 use Mnm\Iys\Helper\Data;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Customer\Model\CustomerFactory;
+use Magento\Newsletter\Model\SubscriberFactory as NewsletterSubscriberFactory;
 
 
 class StatusCheck
@@ -30,6 +33,15 @@ class StatusCheck
     private $iysSubscriptionManager;
     private $isPermChanged;
     private $iysDataHelper;
+    private $ipAddress;
+    private $emailAddress;
+    private $_storeManager;
+    private $customerFactory;
+    private $newsLetterSubscriberFactory;
+    private $customerId;
+    private $email;
+    private $firstName;
+    private $lastName;
 
 
 
@@ -37,7 +49,7 @@ class StatusCheck
 
 
 
-    public function __construct(SubscriberCollectionFactory $subscriberCollectionFactory,SubscriberFactory $subscriberFactory,SubscriptionInformation $subscriptionInfoFetcher,IysSubscriptionManager $iysSubscriptionManager,Data $iysDataHelper)
+    public function __construct(SubscriberCollectionFactory $subscriberCollectionFactory,SubscriberFactory $subscriberFactory,SubscriptionInformation $subscriptionInfoFetcher,IysSubscriptionManager $iysSubscriptionManager,Data $iysDataHelper,StoreManagerInterface $storeManager,CustomerFactory $customerFactory,NewsletterSubscriberFactory $newsletterSubscriberFactory)
     {
 
         $this->subscriptionInfoFetcher = $subscriptionInfoFetcher;
@@ -48,6 +60,9 @@ class StatusCheck
         );
         $this->iysSubscriptionManager=$iysSubscriptionManager;
         $this->iysDataHelper=$iysDataHelper;
+        $this->_storeManager=$storeManager;
+        $this->customerFactory=$customerFactory;
+        $this->newsLetterSubscriberFactory=$newsletterSubscriberFactory;
 
 
 
@@ -64,16 +79,68 @@ class StatusCheck
         $this->paramData = $paramData;
     }
 
+    public function setIpAddress($ipAddress)
+    {
+        $this->ipAddress=$ipAddress;
+    }
+    public function setEmailAddress($email)
+    {
+        $this->emailAddress=$email;
+    }
+
+    public function recordToDefaultTable()
+    {
+
+        $storeId = (int)$this->_storeManager->getStore()->getId();
+        $websiteId = (int)$this->_storeManager->getStore()->getWebsiteId();
+
+
+
+
+
+
+        $subscriber = $this->newsLetterSubscriberFactory->create();
+
+        $subscriber->setSubscriberConfirmCode($subscriber->randomSequence());
+        $subscriber->setSubscriberEmail($this->emailAddress);
+        $subscriber->setStatus(3)
+            ->setStoreId($storeId)
+            ->setCustomerId($this->customerId)
+            ->save();
+
+        $this->subscriberId = $this->subscriptionInfoFetcher->fetchSubscriptionId($this->customerId);
+    }
+
     public function startCheck()
     {
 
 
+
+
+        $this->subscriberId = $this->subscriptionInfoFetcher->fetchSubscriptionId($this->customerId);
+
+
+
+
+        if(!$this->subscriberId)
+        {
+
+            $this->recordToDefaultTable();
+
+
+        }
+
+
+
         if(!$this->isSubscriberRecorded())
         {
+
+
             $this->recordSubscriber();
             $this->SubscribeToQueue();
-            return;
+
         }
+
 
         if($smsRecord = $this->isSmsPermChanged())
         {
@@ -81,6 +148,7 @@ class StatusCheck
         }
         if($callRecord = $this->isCallPermChanged())
         {
+
             $callRecord->setDataToAll('status',$this->paramData['is_call_confirmed'])->save();
         }
         if($mailRecord = $this->isMailPermChanged())
@@ -90,6 +158,7 @@ class StatusCheck
 
         if($this->isPermChanged)
         {
+
             $this->SubscribeToQueue();
             return;
         }
@@ -103,8 +172,9 @@ class StatusCheck
     {
 
 
+        if(!$this->customerId)
+            $this->customerId = $this->subscriptionInfoFetcher->getCustomerId();
 
-        $customerId = $this->subscriptionInfoFetcher->getCustomerId();
 
         if(isset($this->paramData['is_sms_confirmed']))
             $smsPerm = $this->paramData['is_sms_confirmed'];
@@ -117,21 +187,29 @@ class StatusCheck
         else
             $callPerm=-1;
 
-
         if(isset($this->paramData['is_subscribed']))
             $emailPerm = $this->paramData['is_subscribed'];
         else
             $emailPerm = -1;
 
 
-        $email = $this->subscriptionInfoFetcher->getEmailAddress();
 
 
 
-        $nameComposition=$this->subscriptionInfoFetcher->getName();
-        $nameArray = explode(" ",$nameComposition);
-        $firstName = $nameArray[0];
-        $lastName = $nameArray[1];
+        if(!$this->emailAddress)
+             $this->emailAddress= $this->subscriptionInfoFetcher->getEmailAddress();
+
+        if(!$this->firstName || !$this->lastName)
+        {
+            $nameComposition=$this->subscriptionInfoFetcher->getName();
+            $nameArray = explode(" ",$nameComposition);
+            $this->firstName = $nameArray[0];
+            $this->lastName = $nameArray[1];
+
+        }
+
+
+
 
         $source = 1;
         $date = $this->dateTime->gmtDate();
@@ -140,12 +218,11 @@ class StatusCheck
         $note="dummy note";
         $phoneNumber="5415053382";
 
+        $ipAddress = $this->ipAddress;
 
-
-        $recordMobilDev = new RecordMobilDev($customerId,$phoneNumber,$smsPerm,$emailPerm,$callPerm,$email,$firstName,$lastName,$source,$date,$individual,$corporate,$note);
+        $recordMobilDev = new RecordMobilDev($this->customerId,$phoneNumber,$smsPerm,$emailPerm,$callPerm,$this->emailAddress,$this->firstName,$this->lastName,$source,$date,$individual,$corporate,$note,$ipAddress);
 
         $this->iysSubscriptionManager->subscribe($recordMobilDev);
-
 
     }
 
@@ -155,6 +232,7 @@ class StatusCheck
     public function isSubscriberRecorded()
     {
 
+
         try{
             $subscriberCollection = $this->subscriberCollectionFactory->create();
         }catch(\Exception $e)
@@ -163,7 +241,9 @@ class StatusCheck
             exit(1);
         }
 
+
         $subscriberRecords =  $subscriberCollection->addFieldToSelect('id')->addFieldtoFilter("subscriber_id",$this->subscriberId)->load()->getData();
+
 
         return $subscriberRecords?true:false;
 
@@ -176,10 +256,14 @@ class StatusCheck
         foreach($this->paramData as $permission => $val)
         {
 
-            if($permission === "form_key")
+
+
+            if(!str_starts_with($permission,"is_"))
             {
                 continue;
             }
+
+
 
             $model = $this->subscriberFactory->create();
 
@@ -209,6 +293,7 @@ class StatusCheck
 
 
         }
+
 
     }
 
@@ -282,6 +367,26 @@ class StatusCheck
 
         return null;
     }
+
+    public function setCustomerId($id)
+    {
+        $this->customerId=$id;
+    }
+
+    public function setEmail($email)
+    {
+        $this->email=$email;
+    }
+    public function setFirstname($firstName)
+    {
+        $this->firstName=$firstName;
+    }
+    public function setLastname($lastName)
+    {
+        $this->lastName=$lastName;
+    }
+
+
 
     public function setPhonePermFlag()
     {
