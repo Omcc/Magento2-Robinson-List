@@ -1,8 +1,17 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="newsletter_subscriber_save_before">
-        <observer name="Mnm_Iys_Observer_ListenSubscribe" instance="Mnm\Iys\Observer\ListenSubscribe" />
-    </event>
+
     <event name="customer_register_success">
         <observer name="Mnm_Iys_Observer_Register_CustomerRegister" instance="Mnm\Iys\Observer\Register\CustomerRegister" />
     </event>
+    <event name="footer_subscription_succeeded">
+        <observer name="Mnm_Iys_Observer_Register_FooterRegister" instance="Mnm\Iys\Observer\Register\FooterRegister" />
+    </event>
+    <event name="customer_login">
+        <observer name="Mnm_Iys_Observer_Login_ConsumerLogin" instance="Mnm\Iys\Observer\Login\CustomerLogin" />
+    </event>
+
+
+
+
+
 </config>

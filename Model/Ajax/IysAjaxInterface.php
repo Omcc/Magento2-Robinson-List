@@ -37,7 +37,7 @@ interface IysAjaxInterface
     public function registerCustomer($message);
 
 
-    public function readCustomer();
+    public function readCustomer($recordId);
 
 
 }

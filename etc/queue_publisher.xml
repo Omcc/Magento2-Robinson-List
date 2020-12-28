@@ -9,4 +9,7 @@
     <publisher topic="iysRegister.topic">
         <connection name="amqp" exchange="iys-register-exchange" />
     </publisher>
+    <publisher topic="iysRead.topic">
+        <connection name="amqp" exchange="iys-register-exchange" />
+    </publisher>
 </config>

@@ -2,4 +2,5 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
     <consumer name="iysImport.consumer.one" queue="iysRegister-Queue" connection="amqp" handler="Mnm\Iys\Consumer\IysRegister::processRegister"/>
+    <consumer name="iysRead.consumer.one" queue="iysRead-Queue" connection="amqp" handler="Mnm\Iys\Consumer\CustomerLogin::processLogin"/>
 </config>

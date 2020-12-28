@@ -15,14 +15,16 @@
         <plugin name="iys_integration_manage" type="Mnm\Iys\Plugin\Manage\IysSave" sortOrder="1"  />
     </type>
 
-    <type name="Magento\Newsletter\Controller\Manage\Index">
-        <plugin name="iys_integration_index" type="Mnm\Iys\Plugin\Manage\IysIndex" sortOrder="2"  />
-    </type>
+
 
     <preference for="Mnm\Iys\Model\IysRecordInterface" type="Mnm\Iys\Model\RecordMobilDev"/>
     <preference for="Mnm\Iys\Model\IysSubscriptionManagerInterface" type="Mnm\Iys\Model\IysSubscriptionManager" />
     <preference for="Magento\Customer\Block\Newsletter" type="Mnm\Iys\Block\Newsletter"/>
     <preference for="Mnm\Iys\Model\Ajax\IysAjax" type="Mnm\Iys\Model\Ajax\MobilDevAjax"/>
+    <preference for="Magento\Newsletter\Controller\Subscriber\NewAction" type="Mnm\Iys\Model\Controller\NewAction"/>
+
+
+
 
     <type name="Mnm\Iys\Logger\Handler\IysRegistration">
         <arguments>
@@ -35,6 +37,21 @@
             <argument name="name" xsi:type="string">iysregistration_logger</argument>
             <argument name="handlers" xsi:type="array">
                 <item name="system" xsi:type="object">Mnm\Iys\Logger\Handler\IysRegistration</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Mnm\Iys\Logger\Handler\IysLogin">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="Mnm\Iys\Logger\IysLogin">
+        <arguments>
+            <argument name="name" xsi:type="string">iyslogin_logger</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Mnm\Iys\Logger\Handler\IysLogin</item>
             </argument>
         </arguments>
     </type>

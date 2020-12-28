@@ -6,6 +6,8 @@ use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\Json\Helper\Data;
 use Mnm\Iys\Helper\Data as IysDataHelper;
 use Mnm\Iys\Logger\IysRegistration;
+use Mnm\Iys\Model\StatusCheck;
+use Mnm\Iys\Logger\IysLogin;
 
 abstract class IysAjax implements  IysAjaxInterface
 {
@@ -14,24 +16,33 @@ abstract class IysAjax implements  IysAjaxInterface
     protected $jsonHelper;
     protected $iysDataHelper;
     protected $iysRegistrationLogger;
+    protected $iysLoginLogger;
     protected $apiBaseUrl;
+    protected $statusCheck;
 
 
-    public function __construct(Curl $curl,Data $jsonHelper,IysDataHelper $iysDataHelper,IysRegistration $iysRegistrationLogger)
+    public function __construct(Curl $curl,Data $jsonHelper,IysDataHelper $iysDataHelper,IysRegistration $iysRegistrationLogger,StatusCheck $statusCheck,Iyslogin $iysLoginLogger)
     {
         $this->curl=$curl;
         $this->jsonHelper=$jsonHelper;
         $this->iysDataHelper = $iysDataHelper;
         $this->iysRegistrationLogger=$iysRegistrationLogger;
+        $this->iysLoginLogger=$iysLoginLogger;
+        $this->statusCheck=$statusCheck;
 
 
 
     }
 
-    public function writeLog($logText)
+    public function writeRegistrationLog($logText)
     {
         $this->iysRegistrationLogger->info($logText);
 
+    }
+
+    public function writeLoginLog($logText)
+    {
+        $this->iysLoginLogger->info($logText);
     }
 
     public function getAuthToken($path)
@@ -49,7 +60,7 @@ abstract class IysAjax implements  IysAjaxInterface
     }
 
     public abstract function registerCustomer($message);
-    public abstract function readCustomer();
+    public abstract function readCustomer($recordId);
 
     public function jsonEncode($message)
     {

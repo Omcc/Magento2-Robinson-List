@@ -21,9 +21,8 @@ class IysRegister
     public function processRegister(string $message)
     {
 
+
         $this->ajax->registerCustomer($message);
-
-
 
     }
 

@@ -7,6 +7,7 @@ namespace Mnm\Iys\Model\Ajax;
 class MobilDevAjax extends IysAjax
 {
 
+
     //utility function
     public function parseBrands($brandArray)
     {
@@ -71,25 +72,69 @@ class MobilDevAjax extends IysAjax
         $result = $this->curl->getBody();
 
 
-        $this->writeLog("Receiver:Mobildev"." Request:Post ". "url:" . $url.  " Client Ip:" . $ipAddress . " Body:" . $message . " Response:" .$result);
+        $this->writeRegistrationLog("Receiver:Mobildev"." Request:Post ". "url:" . $url.  " Client Ip:" . $ipAddress . " Body:" . $message . " Response:" .$result);
 
 
 
 
     }
 
-    public function readCustomer()
+    public function readCustomer($data)
     {
 
+        $recordId=$data['subscriberId'];
+        $email=$data['email'];
+        $emailRecord='';
+        $phoneRecord='';
 
         $token= $this->getAuthToken("api_path");
-
-        $url = "api.ivtlite.testdrive.club/portfoy/read";
+        $url = "api.ivtlite.testdrive.club/check/record/";
         $this->curl->addHeader("Authorization","Bearer " . $token);
-        $this->curl->get($url);
+
+        $body = '["'.$recordId.'"]';
+        $this->curl->addHeader("Content-Type","application/json");
+        $this->curl->post($url,$body);
 
         $result = $this->curl->getBody();
 
+        $resultObj = $this->jsonHelper->jsonDecode($result);
+        $recordCount=$resultObj['RecordCount'];
+
+        if(!$recordCount)
+            return;
+
+        $recordResult = $resultObj['Result'][0];
+
+        $phoneRecordArr= $recordResult['detail']['msisdn'];
+        $emailRecordArr = $recordResult['detail']['email'];
+
+
+
+        foreach($emailRecordArr as $key => $val)
+        {
+            if($key==$email)
+            {
+                $emailRecord=$val;
+                break;
+            }
+        }
+
+
+
+        $emailPerm = $emailRecord[0]['sendmail'];
+
+        $emailPerm = $emailPerm==2?0:$emailPerm;
+        $param = [
+            'is_subscribed'=>$emailPerm,
+            'is_sms_confirmed'=>0,
+            'is_email_confirmed'=>0
+        ];
+
+        $this->statusCheck->setSubscriberId($recordId);
+        $this->statusCheck->setParamData($param);
+        $this->statusCheck->updateTable();
+
+        $this->writeLoginLog($result);
 
 
 

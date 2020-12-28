@@ -21,8 +21,11 @@ class StatusCheck
     public static $permTypes = array(
         "is_sms_confirmed"=>1,
         "is_call_confirmed"=>2,
-        'is_subscribed'=>3
+        'is_subscribed'=>3,
+        'status_not_known'=>-1
     );
+
+
 
     private $subscriberId;
     private $subscriberCollectionFactory;
@@ -96,28 +99,33 @@ class StatusCheck
 
 
 
-
-
-
         $subscriber = $this->newsLetterSubscriberFactory->create();
 
+
         $subscriber->setSubscriberConfirmCode($subscriber->randomSequence());
+
+
+
         $subscriber->setSubscriberEmail($this->emailAddress);
         $subscriber->setStatus(3)
             ->setStoreId($storeId)
-            ->setCustomerId($this->customerId)
+            ->setCustomerId((int)$this->customerId)
             ->save();
+
 
         $this->subscriberId = $this->subscriptionInfoFetcher->fetchSubscriptionId($this->customerId);
     }
+
 
     public function startCheck()
     {
 
 
+        if(!$this->subscriberId)
+            $this->subscriberId = $this->subscriptionInfoFetcher->fetchSubscriptionId($this->customerId);
 
 
-        $this->subscriberId = $this->subscriptionInfoFetcher->fetchSubscriptionId($this->customerId);
+
 
 
 
@@ -126,9 +134,9 @@ class StatusCheck
         {
 
             $this->recordToDefaultTable();
-
-
         }
+
+
 
 
 
@@ -142,13 +150,13 @@ class StatusCheck
         }
 
 
+
         if($smsRecord = $this->isSmsPermChanged())
         {
             $smsRecord->setDataToAll('status',$this->paramData['is_sms_confirmed'])->save();
         }
         if($callRecord = $this->isCallPermChanged())
         {
-
             $callRecord->setDataToAll('status',$this->paramData['is_call_confirmed'])->save();
         }
         if($mailRecord = $this->isMailPermChanged())
@@ -176,24 +184,20 @@ class StatusCheck
             $this->customerId = $this->subscriptionInfoFetcher->getCustomerId();
 
 
-        if(isset($this->paramData['is_sms_confirmed']))
+        if(isset($this->paramData['is_sms_confirmed']) && $this->iysDataHelper->isIysSmsEnabled())
             $smsPerm = $this->paramData['is_sms_confirmed'];
         else
-            $smsPerm = -1;
-
-        if(isset($this->paramData['is_call_confirmed'])){
+            $smsPerm = self::$permTypes['status_not_known'];
+        if(isset($this->paramData['is_call_confirmed']) && $this->iysDataHelper->isIysCallEnabled()){
             $callPerm= $this->paramData['is_call_confirmed'];
         }
         else
-            $callPerm=-1;
+            $callPerm=self::$permTypes['status_not_known'];
 
-        if(isset($this->paramData['is_subscribed']))
+        if(isset($this->paramData['is_subscribed'])  && $this->iysDataHelper->isIysEmailEnabled())
             $emailPerm = $this->paramData['is_subscribed'];
         else
-            $emailPerm = -1;
-
-
-
+            $emailPerm = self::$permTypes['status_not_known'];
 
 
         if(!$this->emailAddress)
@@ -205,11 +209,7 @@ class StatusCheck
             $nameArray = explode(" ",$nameComposition);
             $this->firstName = $nameArray[0];
             $this->lastName = $nameArray[1];
-
         }
-
-
-
 
         $source = 1;
         $date = $this->dateTime->gmtDate();
@@ -220,9 +220,27 @@ class StatusCheck
 
         $ipAddress = $this->ipAddress;
 
-        $recordMobilDev = new RecordMobilDev($this->customerId,$phoneNumber,$smsPerm,$emailPerm,$callPerm,$this->emailAddress,$this->firstName,$this->lastName,$source,$date,$individual,$corporate,$note,$ipAddress);
+        $recordMobilDev = new RecordMobilDev($this->subscriberId,$phoneNumber,$smsPerm,$emailPerm,$callPerm,$this->emailAddress,$this->firstName,$this->lastName,$source,$date,$individual,$corporate,$note,$ipAddress);
 
         $this->iysSubscriptionManager->subscribe($recordMobilDev);
+
+    }
+
+    public function updateTable()
+    {
+
+        if($smsRecord = $this->isSmsPermChanged())
+        {
+            $smsRecord->setDataToAll('status',$this->paramData['is_sms_confirmed'])->save();
+        }
+        if($callRecord = $this->isCallPermChanged())
+        {
+            $callRecord->setDataToAll('status',$this->paramData['is_call_confirmed'])->save();
+        }
+        if($mailRecord = $this->isMailPermChanged())
+        {
+            $mailRecord->setDataToAll('status',$this->paramData['is_subscribed'])->save();
+        }
 
     }
 
@@ -256,8 +274,6 @@ class StatusCheck
         foreach($this->paramData as $permission => $val)
         {
 
-
-
             if(!str_starts_with($permission,"is_"))
             {
                 continue;
@@ -271,7 +287,6 @@ class StatusCheck
             $permType = StatusCheck::$permTypes[$permission];
 
 
-
             $data = [
                 "subscriber_id"=>$this->subscriberId,
                 "perm_type_id"=>$permType,
@@ -280,7 +295,6 @@ class StatusCheck
                 "value"=>'asda',
                 "change_status_at"=>$this->dateTime->gmtDate()];
             $model->setData($data);
-
 
 
             try{
