@@ -15,7 +15,7 @@
             <labels>
                 <email>I want to be informed about news and promotions via Email.</email>
                 <sms>I want to be informed about news and promotions via SMS.</sms>
-                <phone>I want to be informed about news and promotions via Call.</phone>
+                <call>I want to be informed about news and promotions via Call.</call>
             </labels>
         </iys>
     </default>
