@@ -4,7 +4,7 @@
  * See COPYING.txt for license details.
  */
 
-/** @var \Magento\Customer\Block\Newsletter $block */
+/** @var \Mnm\Iys\Block\Newsletter $block */
 ?>
 <?= $block->getChildHtml('form_before') ?>
 <form class="form form-newsletter-manage" action="<?= $block->escapeUrl($block->getAction()) ?>" method="post" id="form-validate">
@@ -17,7 +17,7 @@
             <input type="hidden" name="is_subscribed" value="0">
             <?php if($block->iysDataHelper->isIysEmailEnabled()):?>
             <input type="checkbox" name="is_subscribed" id="subscription" value="1" title="<?= $block->escapeHtmlAttr(__('Email Subscription')) ?>"<?php if ($block->getIsSubscribed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
-            <label for="subscription" class="label"><span><?= $block->escapeHtml(__('Email Subscription')) ?></span></label>
+            <label for="subscription" class="label"><span><?= $block->escapeHtml(__($block->getIysDataHelper()->getEmailFieldLabel())) ?></span></label>
             <?php endif?>
         </div>
 
@@ -26,7 +26,7 @@
             <input type="hidden" name="is_sms_confirmed" value="0">
             <?php if($block->iysDataHelper->isIysSmsEnabled()):?>
                 <input type="checkbox" name="is_sms_confirmed" id="sms_permission" value="1" title="<?= $block->escapeHtmlAttr(__('SMS Notification Permission')) ?>"<?php if ($block->isSmsPermConfirmed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
-                <label for="sms_permission" class="label"><span><?= $block->escapeHtml(__('I permit to get SMS Notification')) ?></span></label>
+                <label for="sms_permission" class="label"><span><?= $block->escapeHtml(__($block->getIysDataHelper()->getSmsFieldLabel())) ?></span></label>
             <?php endif ?>
         </div>
 
@@ -35,7 +35,7 @@
             <input type="hidden" name="is_call_confirmed" value="0">
             <?php if($block->iysDataHelper->isIysCallEnabled()):?>
                 <input type="checkbox" name="is_call_confirmed" id="call_permission" value="1" title="<?= $block->escapeHtmlAttr(__('Call Permission')) ?>"<?php if ($block->isCallPermConfirmed()) : ?> checked="checked"<?php endif; ?> class="checkbox">
-                <label for="call_permission" class="label"><span><?= $block->escapeHtml(__('I permit to get Call from this provider')) ?></span></label>
+                <label for="call_permission" class="label"><span><?= $block->escapeHtml(__($block->getIysDataHelper()->getCallFieldLabel())) ?></span></label>
             <?php endif?>
         </div>
         <?php /* Extensions placeholder */ ?>

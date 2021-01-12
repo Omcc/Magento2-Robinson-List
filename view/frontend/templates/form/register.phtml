@@ -48,7 +48,7 @@ $formData = $block->getFormData();
                        <?php if ($formData->getIsSubscribed()): ?>checked="checked"<?php endif; ?>
                        class="checkbox">
                 <label for="is_subscribed" class="label">
-                    <span><?= $escaper->escapeHtml(__('Email Permission')) ?></span>
+                    <span><?= $escaper->escapeHtml(__($block->getIysDataHelper()->getEmailFieldLabel())) ?></span>
                 </label>
                     <?php /* Extensions placeholder */ ?>
                     <?= $block->getChildHtml('customer.form.register.newsletter') ?>
@@ -68,7 +68,7 @@ $formData = $block->getFormData();
                        <?php if ($formData->getIsSubscribed()): ?>checked="checked"<?php endif; ?>
                        class="checkbox">
                 <label for="is_sms_confirmed" class="label">
-                    <span><?= $escaper->escapeHtml(__('Sms Permission')) ?></span>
+                    <span><?= $escaper->escapeHtml(__($block->getIysDataHelper()->getSmsFieldLabel())) ?></span>
                 </label>
                     <?php /* Extensions placeholder */ ?>
                     <?= $block->getChildHtml('customer.form.register.newsletter') ?>
@@ -89,7 +89,7 @@ $formData = $block->getFormData();
                        <?php if ($formData->getIsSubscribed()): ?>checked="checked"<?php endif; ?>
                        class="checkbox">
                 <label for="is_call_confirmed" class="label">
-                    <span><?= $escaper->escapeHtml(__('Call Permission')) ?></span>
+                    <span><?= $escaper->escapeHtml(__($block->getIysDataHelper()->getCallFieldLabel())) ?></span>
                 </label>
                     <?php /* Extensions placeholder */ ?>
                     <?= $block->getChildHtml('customer.form.register.newsletter') ?>
@@ -303,6 +303,15 @@ $formData = $block->getFormData();
                        autocomplete="off">
             </div>
         </div>
+        <?php if($block->isIysSmsEnabled() || $block->isIysCallEnabled()):?>
+
+        <div class="field required">
+            <label for="telephone" class="label"><span><?= __('Telephone') ?></span></label>
+            <div class="control">
+                <input type="text" name="telephone" id="telephone" value="<?php echo $block->escapeHtml($block->getFormData()->getTelephone()) ?>" title="<?php echo __('Telephone') ?>" class="input-text" data-validate="{required:true}">
+            </div>
+        </div>
+        <?php endif;?>
     </fieldset>
 
     <fieldset class="fieldset additional_info">

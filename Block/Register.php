@@ -208,6 +208,11 @@ class Register extends \Magento\Directory\Block\Data
         return $this->iysHelper->isIysSmsEnabled();
     }
 
+    public function getIysDataHelper()
+    {
+        return $this->iysHelper;
+    }
+
     /**
      * Restore entity data from session
      *

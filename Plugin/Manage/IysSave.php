@@ -24,14 +24,16 @@ class IysSave
     protected $statusCheck;
     protected $subscriptionInfoFetcher;
     protected $remoteAddress;
+    protected $iysDataHelper;
 
 
-    public function __construct(SubscriptionInformation $subscriptionInfoFetcher,SubscriberFactory $subscriberFactory,StatusCheck $statusCheck,RemoteAddress $remoteAddress)
+    public function __construct(SubscriptionInformation $subscriptionInfoFetcher,SubscriberFactory $subscriberFactory,StatusCheck $statusCheck,RemoteAddress $remoteAddress,Data $iysHelper)
     {
         $this->subscriptionInfoFetcher = $subscriptionInfoFetcher;
         $this->subscriberFactory = $subscriberFactory;
         $this->statusCheck = $statusCheck;
         $this->remoteAddress=$remoteAddress;
+        $this->iysDataHelper=$iysHelper;
 
 
     }
@@ -52,6 +54,7 @@ class IysSave
           $this->statusCheck->setParamData($postedData);
 
           $this->statusCheck->setIpAddress($ip_address);
+          $this->statusCheck->setPhoneNumber($this->iysDataHelper->getTelephoneNumber());
 
 
           $this->statusCheck->startCheck();

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <iys>
+            <general>
+                <email_enabled>1</email_enabled>
+                <call_enabled>0</call_enabled>
+                <sms_enabled>0</sms_enabled>
+                <is_area_code_included>1</is_area_code_included>
+            </general>
+            <api_conf>
+                <iys_ajax_class>DerinmorAjax</iys_ajax_class>
+            </api_conf>
+            <labels>
+                <email>I want to be informed about news and promotions via Email.</email>
+                <sms>I want to be informed about news and promotions via SMS.</sms>
+                <phone>I want to be informed about news and promotions via Call.</phone>
+            </labels>
+        </iys>
+    </default>
+</config>

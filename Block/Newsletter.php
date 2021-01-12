@@ -72,5 +72,10 @@ class Newsletter extends \Magento\Customer\Block\Account\Dashboard
             return 0;
         return $callRecord[0]['status'];
     }
+    public function getIysDataHelper()
+    {
+        return $this->iysDataHelper;
+    }
+
 
 }

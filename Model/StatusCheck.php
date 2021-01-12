@@ -8,6 +8,7 @@ use Mnm\Iys\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollec
 use Mnm\Iys\Model\SubscriberFactory;
 use Mnm\Iys\Model\SubscriptionInformation;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\Stdlib\DateTime\Timezone;
 use Mnm\Iys\Model\RecordMobilDev;
 use Mnm\Iys\Model\IysSubscriptionManager;
 use Mnm\Iys\Helper\Data;
@@ -32,6 +33,7 @@ class StatusCheck
     private $paramData;
     private $subscriberFactory;
     private $dateTime;
+    private $timeZone;
     private $subscriptionInfoFetcher;
     private $iysSubscriptionManager;
     private $isPermChanged;
@@ -45,6 +47,7 @@ class StatusCheck
     private $email;
     private $firstName;
     private $lastName;
+    private $phoneNumber;
 
 
 
@@ -52,7 +55,7 @@ class StatusCheck
 
 
 
-    public function __construct(SubscriberCollectionFactory $subscriberCollectionFactory,SubscriberFactory $subscriberFactory,SubscriptionInformation $subscriptionInfoFetcher,IysSubscriptionManager $iysSubscriptionManager,Data $iysDataHelper,StoreManagerInterface $storeManager,CustomerFactory $customerFactory,NewsletterSubscriberFactory $newsletterSubscriberFactory)
+    public function __construct(SubscriberCollectionFactory $subscriberCollectionFactory,SubscriberFactory $subscriberFactory,SubscriptionInformation $subscriptionInfoFetcher,IysSubscriptionManager $iysSubscriptionManager,Data $iysDataHelper,StoreManagerInterface $storeManager,CustomerFactory $customerFactory,NewsletterSubscriberFactory $newsletterSubscriberFactory,Timezone $timeZone)
     {
 
         $this->subscriptionInfoFetcher = $subscriptionInfoFetcher;
@@ -66,6 +69,7 @@ class StatusCheck
         $this->_storeManager=$storeManager;
         $this->customerFactory=$customerFactory;
         $this->newsLetterSubscriberFactory=$newsletterSubscriberFactory;
+        $this->timeZone=$timeZone;
 
 
 
@@ -124,15 +128,8 @@ class StatusCheck
         if(!$this->subscriberId)
             $this->subscriberId = $this->subscriptionInfoFetcher->fetchSubscriptionId($this->customerId);
 
-
-
-
-
-
-
         if(!$this->subscriberId)
         {
-
             $this->recordToDefaultTable();
         }
 
@@ -142,22 +139,21 @@ class StatusCheck
 
         if(!$this->isSubscriberRecorded())
         {
-
-
             $this->recordSubscriber();
             $this->SubscribeToQueue();
-
         }
 
 
 
         if($smsRecord = $this->isSmsPermChanged())
         {
-            $smsRecord->setDataToAll('status',$this->paramData['is_sms_confirmed'])->save();
+            $smsRecord->setDataToAll('status',$this->paramData['is_sms_confirmed']);
+            $smsRecord->setDataToAll('value',$this->phoneNumber)->save();
         }
         if($callRecord = $this->isCallPermChanged())
         {
-            $callRecord->setDataToAll('status',$this->paramData['is_call_confirmed'])->save();
+            $callRecord->setDataToAll('status',$this->paramData['is_call_confirmed']);
+            $callRecord->setDataToAll('value',$this->phoneNumber)->save();
         }
         if($mailRecord = $this->isMailPermChanged())
         {
@@ -212,15 +208,21 @@ class StatusCheck
         }
 
         $source = 1;
-        $date = $this->dateTime->gmtDate();
+
+        $storeId = (int)$this->_storeManager->getStore()->getId();
+        $timeZone = $this->timeZone->getConfigTimezone(\Magento\Store\Model\ScopeInterface::SCOPE_STORES,$storeId);
+        $currentDate = new \DateTime('now', new \DateTimeZone($timeZone));
+        $date=$currentDate->format('Y-m-d H:i:s');
+
         $individual=1;
         $corporate=0;
         $note="dummy note";
-        $phoneNumber="5415053382";
+
+
 
         $ipAddress = $this->ipAddress;
 
-        $recordMobilDev = new RecordMobilDev($this->subscriberId,$phoneNumber,$smsPerm,$emailPerm,$callPerm,$this->emailAddress,$this->firstName,$this->lastName,$source,$date,$individual,$corporate,$note,$ipAddress);
+        $recordMobilDev = new RecordMobilDev($this->subscriberId,$this->phoneNumber,$smsPerm,$emailPerm,$callPerm,$this->emailAddress,$this->firstName,$this->lastName,$source,$date,$individual,$corporate,$note,$ipAddress);
 
         $this->iysSubscriptionManager->subscribe($recordMobilDev);
 
@@ -271,7 +273,7 @@ class StatusCheck
 
     public function recordSubscriber()
     {
-        foreach($this->paramData as $permission => $val)
+        foreach($this->paramData as $permission => $status)
         {
 
             if(!str_starts_with($permission,"is_"))
@@ -285,14 +287,22 @@ class StatusCheck
 
 
             $permType = StatusCheck::$permTypes[$permission];
+            if($permType == 2 || $permType==1)
+            {
+                $value = $this->phoneNumber;
+            }
+            else
+            {
+                $value = $this->emailAddress;
+            }
 
 
             $data = [
                 "subscriber_id"=>$this->subscriberId,
                 "perm_type_id"=>$permType,
                 "perm_source_id"=>1,
-                "status"=>$val,
-                "value"=>'asda',
+                "status"=>$status,
+                "value"=>$value,
                 "change_status_at"=>$this->dateTime->gmtDate()];
             $model->setData($data);
 
@@ -398,6 +408,10 @@ class StatusCheck
     public function setLastname($lastName)
     {
         $this->lastName=$lastName;
+    }
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber=$phoneNumber;
     }
 
 

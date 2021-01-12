@@ -49,7 +49,13 @@ abstract class IysAjax implements  IysAjaxInterface
     {
         $url = "api.ivtlite.testdrive.club/auth/auth";
 
-        $this->curl->setCredentials("8244613191","60iknn6e9ri8mvq7snqa7369zvtvtk");
+        $api_key = $this->iysDataHelper->getApiKey();
+        $api_secret = $this->iysDataHelper->getApiSecret();
+
+        echo $api_secret;
+        echo $api_key;
+
+        $this->curl->setCredentials($api_key,$api_secret);
 
         $this->curl->get($url);
 

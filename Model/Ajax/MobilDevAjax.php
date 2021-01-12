@@ -50,8 +50,9 @@ class MobilDevAjax extends IysAjax
     public function registerCustomer($message)
     {
 
-
+        echo "hi";
         $token= $this->getAuthToken("api_path");
+        print_r($token);
         $brands = $this->getBrands($token);
 
         $messageObj = $this->jsonDecode($message);
