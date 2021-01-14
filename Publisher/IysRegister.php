@@ -23,6 +23,7 @@ class IysRegister
     public function publish(array $data)
     {
         $this->iysRegistrationLogger->info(\GuzzleHttp\json_encode($data));
+        return;
 
         return $this->publisher->publish(IysRegister::TOPIC_NAME,\GuzzleHttp\json_encode($data));
     }
