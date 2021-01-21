@@ -9,16 +9,19 @@ use Magento\Framework\Event\ObserverInterface;
 
 use Mnm\Iys\Model\StatusCheck;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Mnm\Iys\Model\SubscriptionInformation;
 
 class FooterRegister implements ObserverInterface
 {
 
     protected $statusCheck;
     protected $remoteAddress;
+    protected $subscriptionInfoFetcher;
 
-    public function __construct(StatusCheck $statusCheck,RemoteAddress $remoteAddress)
+    public function __construct(StatusCheck $statusCheck,RemoteAddress $remoteAddress,SubscriptionInformation  $subscriptionInfoFetcher)
     {
 
+        $this->subscriptionInfoFetcher=$subscriptionInfoFetcher;
         $this->statusCheck = $statusCheck;
         $this->remoteAddress = $remoteAddress;
 
@@ -26,19 +29,22 @@ class FooterRegister implements ObserverInterface
     public function execute(Observer $observer)
     {
 
-        $subscriber = $observer->getEvent()->getSubscriber();
-        $subscriberData = $subscriber->getData();
+
+
         $ip_address = $this->remoteAddress->getRemoteAddress();
 
-        $email = $subscriberData['subscriber_email'];
-        $status = $subscriberData['subscriber_status'];
-        $subscriberId = $subscriberData['subscriber_id'];
+        $email = $observer->getEvent()->getSubscriber();
+
 
         $postedData = [
-            "is_subscribed"=> $status,
+            "is_subscribed"=> 1,
             "is_sms_confirmed"=>0,
             "is_call_confirmed"=>0
         ];
+
+        $subscriptionId = $this->subscriptionInfoFetcher->fetchSubscriptionByEmail($email);
+
+
 
 
 
@@ -47,7 +53,8 @@ class FooterRegister implements ObserverInterface
         $this->statusCheck->setParamData($postedData);
         $this->statusCheck->setFirstname(" ");
         $this->statusCheck->setLastname(" ");
-        $this->statusCheck->setSubscriberId($subscriberId);
+        $this->statusCheck->setSubscriberId($subscriptionId);
+
         $this->statusCheck->startCheck();
 
 

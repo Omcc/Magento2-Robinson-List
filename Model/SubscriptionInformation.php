@@ -72,6 +72,26 @@ class SubscriptionInformation
         return $connection->fetchOne($select);
 
     }
+    public function fetchSubscriptionByEmail($email=NULL)
+    {
+        $storeId = $this->storeManager->getStore()->getId();
+
+
+
+        if(!$email)
+            return;
+        $connection = $this->resourceConnection->getConnection();
+        $select = $connection
+            ->select()
+            ->from($this->resourceConnection->getTableName('newsletter_subscriber'))
+            ->where('store_id = ?', $storeId)
+            ->where('subscriber_email = ?',$email)
+            ->limit(1);
+
+        return $connection->fetchOne($select);
+
+
+    }
 
     public function getCustomerId()
     {

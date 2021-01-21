@@ -15,13 +15,18 @@
         <plugin name="iys_integration_manage" type="Mnm\Iys\Plugin\Manage\IysSave" sortOrder="1"  />
     </type>
 
+    <type name="\Magento\Newsletter\Controller\Subscriber\NewAction">
+        <plugin name="iys_footer_subscriber_after_plugin" type="Mnm\Iys\Plugin\Footer\IysNew" sortOrder="1"/>
+    </type>
+
+
 
 
     <preference for="Mnm\Iys\Model\IysRecordInterface" type="Mnm\Iys\Model\RecordMobilDev"/>
     <preference for="Mnm\Iys\Model\IysSubscriptionManagerInterface" type="Mnm\Iys\Model\IysSubscriptionManager" />
     <preference for="Magento\Customer\Block\Newsletter" type="Mnm\Iys\Block\Newsletter"/>
     <preference for="Mnm\Iys\Model\Ajax\IysAjax" type="Mnm\Iys\Model\Ajax\MobilDevAjax"/>
-    <preference for="Magento\Newsletter\Controller\Subscriber\NewAction" type="Mnm\Iys\Model\Controller\NewAction"/>
+
 
 
 
