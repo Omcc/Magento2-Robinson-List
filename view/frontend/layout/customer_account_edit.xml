@@ -8,10 +8,9 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="customer_account"/>
     <body>
-        <referenceBlock name="customer_edit" class="Mnm\Iys\Block\Edit">
-            <action method="setTemplate">
-                <argument name="template" xsi:type="string">Mnm_Iys::form/edit.phtml</argument>
-            </action>
-        </referenceBlock>
+
+        <referenceContainer name="form.additional.info">
+            <block name="phone-field" class="Mnm\Iys\Block\Edit" template="Mnm_Iys::form/phone.phtml"/>
+        </referenceContainer>
     </body>
 </page>
