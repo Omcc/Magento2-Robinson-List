@@ -40,6 +40,11 @@ class Data extends AbstractHelper
         return $this->getConfig('iys/general/call_enabled');
     }
 
+    public function isQueueEnabled()
+    {
+        return $this->getConfig('iys/general/queue_enabled');
+    }
+
     public function getApiBaseUrl()
     {
         return $this->getConfig('iys/api_conf/base_url');
