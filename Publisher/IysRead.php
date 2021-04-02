@@ -18,7 +18,6 @@ class IysRead
 
     public function publish(array $data)
     {
-        return;
         return $this->publisher->publish(IysRead::TOPIC_NAME,\GuzzleHttp\json_encode($data));
     }
 
