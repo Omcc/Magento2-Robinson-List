@@ -9,14 +9,8 @@ class DerinmorAjax extends IysAjax
 
 
 
-
-
-
-
-
     public function registerCustomer($message)
     {
-
 
 
 

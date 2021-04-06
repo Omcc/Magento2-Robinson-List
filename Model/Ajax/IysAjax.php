@@ -47,7 +47,7 @@ abstract class IysAjax implements  IysAjaxInterface
 
     public function getAuthToken($path)
     {
-        $url = "api.ivtlite.testdrive.club/auth/auth";
+        $url = $this->getApiBaseUrl();
 
         $api_key = $this->iysDataHelper->getApiKey();
         $api_secret = $this->iysDataHelper->getApiSecret();
